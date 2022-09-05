@@ -1,115 +1,171 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 import numpy as np
-import plotly.express as px
 
+st.title('Employees App')
+st.header("using streamlit")
+st.write("Dashboard (employees).")
 
-#--- IMPORT DATA ---#
-df=pd.read_csv("employee_data.csv")
+@st.cache
+def load_data(nrows):
+    employee = pd.read_csv("Employees.csv", nrows=nrows)
+    lowercase = lambda x: str(x).lower()
+    return employee
 
-#--- PAGE CONFIG ---#
-st.set_page_config(page_title="Socialize your Knowledge",
-                   page_icon=":busts_in_silhouette:")
+employee_load_state = st.text('Loading employees data...')
+employee = load_data(501)
+employee_load_state.text("Done!")
 
-st.title("Socialize your Knowledge")
-st.markdown("_Site that would help and make easier for us to analyze the performance of Socialize your Knowledge employees_")
+employee_description = st.sidebar.checkbox("Data description")
+if employee_description:
+    st.header("Show Dataframe Overview")
+    st.dataframe(employee)
 
-#--- LOGO ---#
-st.sidebar.image("99.png")
-st.sidebar.markdown("##")
+hisplot_by_age= st.sidebar.checkbox("Histplot by Age")
+if hisplot_by_age:
+    fig, ax = plt.subplots()
+    ax.hist(employee.Age)
+    st.header("Histplot of employee Age")
+    st.pyplot(fig)
+    st.markdown("_")
 
-#--- SIDEBAR FILTERS ---#
+employee_histplot= st.sidebar.checkbox("employees per unit")
+if employee_histplot:
+    fig, ax = plt.subplots()
+    ax.hist(employee.Unit)
+    st.header("Histplot of employees")
+    st.pyplot(fig)
+    st.markdown("_")
 
-gender = st.sidebar.multiselect("Select Gender",
-                                options=df['gender'].unique(),
-                                default=df['gender'].unique())
-st.sidebar.markdown("##")
+city_attrittion= st.sidebar.checkbox("City chart and Attrition rate")
+if city_attrittion:
+    fig, ax = plt.subplots()
+    y= employee["Attrition_rate"]
+    x=employee["Hometown"]
+    ax.barh(x,y)
+    ax.set_ylabel("City")
+    ax.set_xlabel("Attrition_rate")
+    st.header("Attrition_rate by city")
+    st.pyplot(fig)
+    st.markdown("_")
 
-performance_score= st.sidebar.multiselect("Select the Performance Score",
-                                          options=df['performance_score'].unique(),
-                                          default=df['performance_score'].unique())
-st.sidebar.markdown("##")
+age_attrition= st.sidebar.checkbox("graphic: age and attrition rate")
+if age_attrition:
+    fig, ax = plt.subplots()
+    y= employee["Attrition_rate"]
+    x=employee["Age"]
+    ax.barh(x,y)
+    ax.set_ylabel("Age")
+    ax.set_xlabel("Attrition rate")
+    st.header("Attrition rate by age")
+    st.pyplot(fig)
+    st.markdown("_")
 
-marital_status= st.sidebar.multiselect("Select Marital Status",
-                                       options=df['marital_status'].unique(),
-                                       default=df['marital_status'].unique())
+attrition_service= st.sidebar.checkbox("Graphic: attrition rate and time of service")
+if attrition_service:
+    fig, ax = plt.subplots()
+    y= employee["Attrition_rate"]
+    x=employee["Time_of_service"]
+    ax.barh(x,y)
+    ax.set_ylabel("Time of service")
+    ax.set_xlabel("Attrition rate")
+    st.header("Attrition rate and time of service")
+    st.pyplot(fig)
+    st.markdown("_")
 
-df_selection=df.query(
-    "gender == @gender & performance_score == @performance_score & marital_status == @marital_status")
+@st.cache
+def df_id(id):
+    employee_byid=employee[employee["Employee_ID"].str.upper().str.contains(id.upper())]
+    
+    return employee_byid
 
-#--- CHARTS ---#
+employee_id= st.sidebar.text_input("ID de empleado")
+search_by_id=st.sidebar.button("Search by ID")
 
-#Chart to visualize the average worked hours by employee gender
-avg_hours_gender=(
-    df_selection.groupby(by=['gender']).sum()[['average_work_hours']].sort_values(by="average_work_hours"))
+if(search_by_id):
+    id_filter= df_id(employee_id)
+    count_row= id_filter.shape[0]
+    st.write(f"Total: {count_row} resultados")
 
-fig_hours_gender=px.bar(avg_hours_gender,
-                        x=avg_hours_gender.index,
-                        y="average_work_hours", 
-                        orientation="v",
-                        title="Average Worked Hours by Gender",
-                        labels=dict(average_work_hours="Total Worked Hours", gender="Gender"),
-                        color_discrete_sequence=["#7ECBB4"],
-                        template="plotly_white")
-fig_hours_gender.update_layout(plot_bgcolor="rgba(0,0,0,0)")
+    st.dataframe(id_filter)
 
-st.plotly_chart(fig_hours_gender)
+@st.cache
+def df_hometown(hometown):
+    hometown_filter=employee[employee["Hometown"].str.upper().str.contains(hometown.upper())]
+    
+    return hometown_filter
 
-#Chart to visualize the salary by employee age
-age=df_selection['age']
-position=df_selection['position']
-salary=df_selection['salary']
-fig_age=px.scatter(df_selection,
-                   x=age,
-                   y=salary,
-                   color=position,
-                   title="Employee Salary by Age",
-                   labels=dict(age="Age", salary="Salary", position="Position"),
-                   template="plotly_white")
-fig_age.update_layout(plot_bgcolor="rgba(0,0,0,0)")
+employees_hometown= st.sidebar.text_input("Employee's Hometown")
+search_by_hometown=st.sidebar.button("Search by hometown")
 
-st.plotly_chart(fig_age)
+if(search_by_hometown):
+    hometown_filter_if= df_hometown(employees_hometown)
+    count_row= hometown_filter_if.shape[0]
+    st.write(f"Total: {count_row} outcome")
 
-#Chart to visualize the performance score distribution 
-name=df_selection['name_employee']
-performance=df_selection['performance_score']
+    st.dataframe(hometown_filter_if)
 
-fig_distribution_perf=px.bar(df_selection,
-                             x=name,
-                             y=performance,
-                             title="Performance Score Distribution",
-                             labels=dict(name_employee="Employee Name", performance_score="Performance Score"),
-                             color_discrete_sequence=["#7ECBB4"],
-                             template="plotly_white")
-fig_distribution_perf.update_layout(plot_bgcolor="rgba(0,0,0,0)")
-st.plotly_chart(fig_distribution_perf)
+@st.cache
+def df_unit(unit):
+    unit_filter=employee[employee["Unit"].str.upper().str.contains(unit.upper())]
+    
+    return unit_filter
 
-#Chart to visualize the relation between the average worked hours vs the performance score
-avg_hours=df_selection['average_work_hours']
-perf_score=df_selection['performance_score']
-dept=df_selection['department']
-salary=df_selection['salary']
+unit_employee= st.sidebar.text_input(" unit by employee")
+search_unit=st.sidebar.button("search by unit")
 
-fig_perf_work=px.scatter(df_selection,
-                         x=perf_score,
-                         y=avg_hours,
-                         size=salary,
-                         color=dept,
-                         title="Worked Hours vs. Performance Score",
-                         labels=dict(average_work_hours="Average Hours", performance_score="Performance Score",
-                                     department="Department", salary="Salary"),
-                         template="plotly_white")
-fig_perf_work.update_layout(plot_bgcolor="rgba(0,0,0,0)")
+if(search_unit):
+    unit_filter_if= df_unit(unit_employee)
+    count_row= unit_filter_if.shape[0]
+    st.write(f"Total: {count_row} outcome")
 
-st.plotly_chart(fig_perf_work)
+    st.dataframe(unit_filter_if)
 
+@st.cache
+def df_education(education):
+    filter_education=employee[employee["Education_Level"]==education]
+    
+    return filter_education
 
-#--- CONCLUSION ---#
-st.markdown("**Analysis**")
-st.markdown("Within this site you are able to filter by gender, performance score, marital status to make a more profund\
-            analysis. In general we see that the female population in the company work more hours than men. The employees in the company\
-            are between 30-60 years but the salary is given according to the position they have. We can also appreciate that most of the\
-            employees have a performance score of 3 and that the worked hours doesn´t influence that score.")
+select_education= st.sidebar.selectbox("Select education level", employee['Education_Level'].unique())
+search_education=st.sidebar.button("Search by education level")
 
+if(search_education):
+    filter_education_if= df_education(select_education)
+    count_row= filter_education_if.shape[0]
+    st.write(f"Total: {count_row} outcome")
 
+    st.dataframe(filter_education_if)
 
+@st.cache
+def hometown_city(city):
+    filter_city=employee[employee["Hometown"]==city]
+    
+    return filter_city
+
+select_city= st.sidebar.selectbox("Select city", employee['Hometown'].unique())
+search_city=st.sidebar.button("search by city")
+
+if(search_city):
+    filter_city_if= hometown_city(select_city)
+    count_row= filter_city_if.shape[0]
+    st.write(f"Total: {count_row} outcome")
+
+    st.dataframe(filter_city_if)
+
+@st.cache
+def df_one(one):
+    filter_one=employee[employee["Unit"]==one]
+    
+    return filter_one
+
+select_one= st.sidebar.selectbox("Select a unit in box", employee['Unit'].unique())
+search_one=st.sidebar.button("Search by unit in box")
+
+if(search_one):
+    filter_one_if= df_one(select_one)
+    count_row= filter_one_if.shape[0]
+    st.write(f"Total: {count_row} outcome")
+
+    st.dataframe(filter_one_if)
