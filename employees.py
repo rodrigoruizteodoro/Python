@@ -5,7 +5,7 @@ import numpy as np
 
 st.title('Dash desercion de empleados')
 st.header("Streamlit")
-st.write("Dashboard trabajadores")
+st.write("Maria Fernanda y Rodrigo Ruiz")
 
 st.sidebar.image("01.jpeg")
 st.sidebar.markdown("##")
@@ -87,24 +87,6 @@ if age_attrition:
 
 
 @st.cache
-def df_id(id):
-    employee_byid=employee[employee["Employee_ID"].str.upper().str.contains(id.upper())]
-    
-    return employee_byid
-
-employee_id= st.sidebar.text_input("ID de empleado")
-search_by_id=st.sidebar.button("Buscar por ID")
-
-if(search_by_id):
-    id_filter= df_id(employee_id)
-    count_row= id_filter.shape[0]
-    st.write(f"Total: {count_row} resultados")
-
-    st.dataframe(id_filter)
-
-
-
-@st.cache
 def df_hometown(hometown):
     hometown_filter=employee[employee["Hometown"].str.upper().str.contains(hometown.upper())]
     
@@ -121,24 +103,37 @@ if(search_by_hometown):
     st.dataframe(hometown_filter_if)
 
 
+@st.cache
+def df_id(id):
+    employee_byid=employee[employee["Employee_ID"].str.upper().str.contains(id.upper())]
+    
+    return employee_byid
 
+employee_id= st.sidebar.text_input("ID de empleado")
+search_by_id=st.sidebar.button("Buscar por ID")
+
+if(search_by_id):
+    id_filter= df_id(employee_id)
+    count_row= id_filter.shape[0]
+    st.write(f"Total: {count_row} resultados")
+
+    st.dataframe(id_filter)
 
 @st.cache
-def df_unit(unit):
-    unit_filter=employee[employee["Unit"].str.upper().str.contains(unit.upper())]
+def df_one(one):
+    filter_one=employee[employee["Unit"]==one]
     
-    return unit_filter
+    return filter_one
 
-unit_employee= st.sidebar.text_input("Empleados por unidad")
-search_unit=st.sidebar.button("Buscar Unidad")
+select_one= st.sidebar.selectbox("Puesto", employee['Unit'].unique())
+search_one=st.sidebar.button("Buscar por Puesto")
 
-if(search_unit):
-    unit_filter_if= df_unit(unit_employee)
-    count_row= unit_filter_if.shape[0]
+if(search_one):
+    filter_one_if= df_one(select_one)
+    count_row= filter_one_if.shape[0]
     st.write(f"Total: {count_row} outcome")
 
-    st.dataframe(unit_filter_if)
-
+    st.dataframe(filter_one_if)
 
 
 @st.cache
@@ -158,6 +153,22 @@ if(search_education):
     st.dataframe(filter_education_if)
 
 
+@st.cache
+def df_unit(unit):
+    unit_filter=employee[employee["Unit"].str.upper().str.contains(unit.upper())]
+    
+    return unit_filter
+
+unit_employee= st.sidebar.text_input("Empleados por unidad")
+search_unit=st.sidebar.button("Buscar Unidad")
+
+if(search_unit):
+    unit_filter_if= df_unit(unit_employee)
+    count_row= unit_filter_if.shape[0]
+    st.write(f"Total: {count_row} outcome")
+
+    st.dataframe(unit_filter_if)
+
 
 @st.cache
 def hometown_city(city):
@@ -175,20 +186,3 @@ if(search_city):
 
     st.dataframe(filter_city_if)
 
-
-
-@st.cache
-def df_one(one):
-    filter_one=employee[employee["Unit"]==one]
-    
-    return filter_one
-
-select_one= st.sidebar.selectbox("Puesto", employee['Unit'].unique())
-search_one=st.sidebar.button("Buscar por Puesto")
-
-if(search_one):
-    filter_one_if= df_one(select_one)
-    count_row= filter_one_if.shape[0]
-    st.write(f"Total: {count_row} outcome")
-
-    st.dataframe(filter_one_if)
