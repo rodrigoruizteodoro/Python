@@ -89,7 +89,7 @@ def df_id(id):
     
     return employee_byid
 
-employee_id= st.sidebar.text_input("Filtrar por ID de empleado")
+employee_id= st.sidebar.text_input("ID de empleado")
 search_by_id=st.sidebar.button("Buscar por ID")
 
 if(search_by_id):
@@ -105,7 +105,7 @@ def df_hometown(hometown):
     
     return hometown_filter
 
-employees_hometown= st.sidebar.text_input("Filtrar por lugar de nacimiento de empleados")
+employees_hometown= st.sidebar.text_input("Lugar de nacimiento")
 search_by_hometown=st.sidebar.button("Buscar Lugar de nacimiento")
 
 if(search_by_hometown):
@@ -124,7 +124,7 @@ def df_unit(unit):
     
     return unit_filter
 
-unit_employee= st.sidebar.text_input("Filtrar por empleados por unidad")
+unit_employee= st.sidebar.text_input("Empleados por unidad")
 search_unit=st.sidebar.button("Buscar Unidad")
 
 if(search_unit):
@@ -140,7 +140,7 @@ def df_education(education):
     
     return filter_education
 
-select_education= st.sidebar.selectbox("Filtrar por nivel de educación", employee['Education_Level'].unique())
+select_education= st.sidebar.selectbox("Nivel de educación", employee['Education_Level'].unique())
 search_education=st.sidebar.button("Buscar Nivel de educación")
 
 if(search_education):
@@ -173,7 +173,7 @@ def df_one(one):
     return filter_one
 
 select_one= st.sidebar.selectbox("Select a unit in box", employee['Unit'].unique())
-search_one=st.sidebar.button("Search by unit in box")
+search_one=st.sidebar.button("Buscar por Unidad")
 
 if(search_one):
     filter_one_if= df_one(select_one)
