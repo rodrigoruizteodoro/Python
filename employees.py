@@ -13,28 +13,21 @@ def load_data(nrows):
     lowercase = lambda x: str(x).lower()
     return employee
 
-employee_load_state = st.text('Loading employees data...')
+employee_load_state = st.text('Cargando Datos...')
 employee = load_data(500)
-employee_load_state.text("Done!")
+employee_load_state.text("Carga Completada :)")
 
-employee_description = st.sidebar.checkbox("Data description")
+
+employee_description = st.sidebar.checkbox("Base de Datos")
 if employee_description:
-    st.header("Show Dataframe Overview")
+    st.header("Muestra de Variables")
     st.dataframe(employee)
 
-hisplot_by_age= st.sidebar.checkbox("Histplot by Age")
+hisplot_by_age= st.sidebar.checkbox("Histograma")
 if hisplot_by_age:
     fig, ax = plt.subplots()
     ax.hist(employee.Age)
-    st.header("Histplot of employee Age")
-    st.pyplot(fig)
-    st.markdown("_")
-
-employee_histplot= st.sidebar.checkbox("employees per unit")
-if employee_histplot:
-    fig, ax = plt.subplots()
-    ax.hist(employee.Unit)
-    st.header("Histplot of employees")
+    st.header("Histograma de los empleados por edad")
     st.pyplot(fig)
     st.markdown("_")
 
@@ -50,6 +43,30 @@ if city_attrittion:
     st.pyplot(fig)
     st.markdown("_")
 
+
+employee_histplot= st.sidebar.checkbox("Histograma de empleados por unidad")
+if employee_histplot:
+    fig, ax = plt.subplots()
+    ax.hist(employee.Unit)
+    st.header("Histograma de Empleados por unidad")
+    st.pyplot(fig)
+    st.markdown("_")
+
+    
+attrition_service= st.sidebar.checkbox("Graphic: attrition rate and time of service")
+if attrition_service:
+    fig, ax = plt.subplots()
+    y= employee["Attrition_rate"]
+    x=employee["Time_of_service"]
+    ax.barh(x,y)
+    ax.set_ylabel("Time of service")
+    ax.set_xlabel("Attrition rate")
+    st.header("Attrition rate and time of service")
+    st.pyplot(fig)
+    st.markdown("_")
+
+
+
 age_attrition= st.sidebar.checkbox("graphic: age and attrition rate")
 if age_attrition:
     fig, ax = plt.subplots()
@@ -62,17 +79,7 @@ if age_attrition:
     st.pyplot(fig)
     st.markdown("_")
 
-attrition_service= st.sidebar.checkbox("Graphic: attrition rate and time of service")
-if attrition_service:
-    fig, ax = plt.subplots()
-    y= employee["Attrition_rate"]
-    x=employee["Time_of_service"]
-    ax.barh(x,y)
-    ax.set_ylabel("Time of service")
-    ax.set_xlabel("Attrition rate")
-    st.header("Attrition rate and time of service")
-    st.pyplot(fig)
-    st.markdown("_")
+
 
 @st.cache
 def df_id(id):
