@@ -7,6 +7,9 @@ st.title('Dash desercion de empleados')
 st.header("Streamlit")
 st.write("Dashboard trabajadores")
 
+st.sidebar.image("01.jpeg")
+st.sidebar.markdown("##")
+
 @st.cache
 def load_data(nrows):
     employee = pd.read_csv("Employees.csv", nrows=nrows)
@@ -99,6 +102,8 @@ if(search_by_id):
 
     st.dataframe(id_filter)
 
+
+
 @st.cache
 def df_hometown(hometown):
     hometown_filter=employee[employee["Hometown"].str.upper().str.contains(hometown.upper())]
@@ -134,6 +139,8 @@ if(search_unit):
 
     st.dataframe(unit_filter_if)
 
+
+
 @st.cache
 def df_education(education):
     filter_education=employee[employee["Education_Level"]==education]
@@ -149,6 +156,8 @@ if(search_education):
     st.write(f"Total: {count_row} outcome")
 
     st.dataframe(filter_education_if)
+
+
 
 @st.cache
 def hometown_city(city):
@@ -166,14 +175,16 @@ if(search_city):
 
     st.dataframe(filter_city_if)
 
+
+
 @st.cache
 def df_one(one):
     filter_one=employee[employee["Unit"]==one]
     
     return filter_one
 
-select_one= st.sidebar.selectbox("Select a unit in box", employee['Unit'].unique())
-search_one=st.sidebar.button("Buscar por Unidad")
+select_one= st.sidebar.selectbox("Puesto", employee['Unit'].unique())
+search_one=st.sidebar.button("Buscar por Puesto")
 
 if(search_one):
     filter_one_if= df_one(select_one)
