@@ -3,9 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-st.title('Employees App')
-st.header("using streamlit")
-st.write("Dashboard (employees).")
+st.title('Dash desercion de empleados')
+st.header("Streamlit")
+st.write("Dashboard trabajadores")
 
 @st.cache
 def load_data(nrows):
@@ -18,33 +18,22 @@ employee = load_data(500)
 employee_load_state.text("Carga Completada :)")
 
 
-employee_description = st.sidebar.checkbox("Base de Datos")
+employee_description = st.sidebar.checkbox("Ver Base de Datos")
 if employee_description:
     st.header("Muestra de Variables")
     st.dataframe(employee)
 
-hisplot_by_age= st.sidebar.checkbox("Histograma")
+hisplot_by_age= st.sidebar.checkbox("Ver Histograma")
 if hisplot_by_age:
     fig, ax = plt.subplots()
     ax.hist(employee.Age)
-    st.header("Histograma de los empleados por edad")
-    st.pyplot(fig)
-    st.markdown("_")
-
-city_attrittion= st.sidebar.checkbox("City chart and Attrition rate")
-if city_attrittion:
-    fig, ax = plt.subplots()
-    y= employee["Attrition_rate"]
-    x=employee["Hometown"]
-    ax.barh(x,y)
-    ax.set_ylabel("City")
-    ax.set_xlabel("Attrition_rate")
-    st.header("Attrition_rate by city")
+    st.header("Histograma de los numero de empleados por edad")
     st.pyplot(fig)
     st.markdown("_")
 
 
-employee_histplot= st.sidebar.checkbox("Histograma de empleados por unidad")
+
+employee_histplot= st.sidebar.checkbox("Ver Histograma de empleados por unidad")
 if employee_histplot:
     fig, ax = plt.subplots()
     ax.hist(employee.Unit)
@@ -52,8 +41,21 @@ if employee_histplot:
     st.pyplot(fig)
     st.markdown("_")
 
+
+city_attrittion= st.sidebar.checkbox("Ver gráfico de ciudades y tasa de deserción")
+if city_attrittion:
+    fig, ax = plt.subplots()
+    y= employee["Attrition_rate"]
+    x=employee["Hometown"]
+    ax.barh(x,y)
+    ax.set_ylabel("City")
+    ax.set_xlabel("Attrition_rate")
+    st.header("Tasa de deserción por ciudad")
+    st.pyplot(fig)
+    st.markdown("_")
+
     
-attrition_service= st.sidebar.checkbox("Graphic: attrition rate and time of service")
+attrition_service= st.sidebar.checkbox("Ver grafico tasa de deserción y tiempo de servicio")
 if attrition_service:
     fig, ax = plt.subplots()
     y= employee["Attrition_rate"]
@@ -61,13 +63,13 @@ if attrition_service:
     ax.barh(x,y)
     ax.set_ylabel("Time of service")
     ax.set_xlabel("Attrition rate")
-    st.header("Attrition rate and time of service")
+    st.header("Tasa de deserción y tiempo de servicio")
     st.pyplot(fig)
     st.markdown("_")
 
 
 
-age_attrition= st.sidebar.checkbox("graphic: age and attrition rate")
+age_attrition= st.sidebar.checkbox("Ver grafico edad y tasa de deserción")
 if age_attrition:
     fig, ax = plt.subplots()
     y= employee["Attrition_rate"]
@@ -75,7 +77,7 @@ if age_attrition:
     ax.barh(x,y)
     ax.set_ylabel("Age")
     ax.set_xlabel("Attrition rate")
-    st.header("Attrition rate by age")
+    st.header("tasa de deserción por edad")
     st.pyplot(fig)
     st.markdown("_")
 
@@ -87,8 +89,8 @@ def df_id(id):
     
     return employee_byid
 
-employee_id= st.sidebar.text_input("ID de empleado")
-search_by_id=st.sidebar.button("Search by ID")
+employee_id= st.sidebar.text_input("Filtrar por ID de empleado")
+search_by_id=st.sidebar.button("Buscar por ID")
 
 if(search_by_id):
     id_filter= df_id(employee_id)
@@ -103,8 +105,8 @@ def df_hometown(hometown):
     
     return hometown_filter
 
-employees_hometown= st.sidebar.text_input("Employee's Hometown")
-search_by_hometown=st.sidebar.button("Search by hometown")
+employees_hometown= st.sidebar.text_input("Filtrar por lugar de nacimiento de empleados")
+search_by_hometown=st.sidebar.button("Buscar Lugar de nacimiento")
 
 if(search_by_hometown):
     hometown_filter_if= df_hometown(employees_hometown)
@@ -113,14 +115,17 @@ if(search_by_hometown):
 
     st.dataframe(hometown_filter_if)
 
+
+
+
 @st.cache
 def df_unit(unit):
     unit_filter=employee[employee["Unit"].str.upper().str.contains(unit.upper())]
     
     return unit_filter
 
-unit_employee= st.sidebar.text_input(" unit by employee")
-search_unit=st.sidebar.button("search by unit")
+unit_employee= st.sidebar.text_input("Filtrar por empleados por unidad")
+search_unit=st.sidebar.button("Buscar Unidad")
 
 if(search_unit):
     unit_filter_if= df_unit(unit_employee)
@@ -135,8 +140,8 @@ def df_education(education):
     
     return filter_education
 
-select_education= st.sidebar.selectbox("Select education level", employee['Education_Level'].unique())
-search_education=st.sidebar.button("Search by education level")
+select_education= st.sidebar.selectbox("Filtrar por nivel de educación", employee['Education_Level'].unique())
+search_education=st.sidebar.button("Buscar Nivel de educación")
 
 if(search_education):
     filter_education_if= df_education(select_education)
@@ -151,8 +156,8 @@ def hometown_city(city):
     
     return filter_city
 
-select_city= st.sidebar.selectbox("Select city", employee['Hometown'].unique())
-search_city=st.sidebar.button("search by city")
+select_city= st.sidebar.selectbox("Ciudad de Nacimiento", employee['Hometown'].unique())
+search_city=st.sidebar.button("Buscar Ciudad")
 
 if(search_city):
     filter_city_if= hometown_city(select_city)
